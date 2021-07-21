@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/cat_perms"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="sms_permission"
+            android:summary="@string/permission_not_granted"
+            android:title="@string/get_permission"
+            app:enableCopying="true"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="unsafe_permission"
+            android:summary="@string/link_help"
+            android:title="@string/link"
+            app:enableCopying="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/cat_main"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="enable"
+            android:title="@string/enable_sending"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:key="to"
+            android:title="@string/send_to"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="from"
+            android:title="@string/send_from"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:key="pass"
+            android:title="@string/from_password"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            android:key="id"
+            android:title="@string/from_id"
+            app:enableCopying="false"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <DropDownPreference
+            android:entries="@array/send_types"
+            android:entryValues="@array/send_type_values"
+            android:key="type"
+            android:title="@string/sending_type"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="list"
+            android:summary="@string/list_help"
+            android:title="@string/settings_list"
+            app:enableCopying="false"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/delay_cat"
+        app:iconSpaceReserved="false">
+
+        <SeekBarPreference
+            android:defaultValue="0"
+            android:key="delay"
+            android:max="30"
+            android:summary="@string/delay_title_summary"
+            android:title="@string/delay_title"
+            app:iconSpaceReserved="false"
+            app:min="0"
+            app:showSeekBarValue="true" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="disable_delay"
+            android:title="@string/disable_delay"
+            app:iconSpaceReserved="false" />
+
+        <SeekBarPreference
+            android:defaultValue="2"
+            android:key="time_wo_delay"
+            android:max="30"
+            android:summary="@string/time_wo_delay_summary"
+            android:title="@string/time_wo_delay"
+            app:iconSpaceReserved="false"
+            app:min="2"
+            app:showSeekBarValue="true" />
+
+        <EditTextPreference
+            android:key="control_number"
+            android:summary="@string/control_number_summary"
+            android:title="@string/control_number"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

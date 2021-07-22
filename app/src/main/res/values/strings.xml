@@ -4,7 +4,6 @@
     <string name="permission_not_granted">Разрешение на чтение СМС не получено</string>
     <string name="permission_granted">Разрешение на чтение СМС получено</string>
     <string name="send_to">E-mail для пересылки</string>
-    <string name="set_send_to">Установить настройки</string>
     <string name="send_from">E-mail отправителя (Google аккаунт)</string>
     <string name="from_password">Пароль отправителя (Google аккаунт)</string>
     <string name="link">Дать доступ к входу из небезопасных приложений</string>
@@ -15,7 +14,6 @@
     <string name="white_list">Белый список</string>
     <string name="list_help">Список через запятую, работает при выбранном типе пересылки \"белый\" или \"чёрный\" список</string>
     <string name="from_id">Идентификатор отправителя</string>
-    <string name="pref_set">Готово</string>
     <string name="sending_type">Тип пересылки</string>
     <string name="settings_list">Список номеров для настройки</string>
     <string name="cat_perms">Необходимые разрешения</string>
@@ -23,10 +21,14 @@
     <string name="delay_cat">Управление задержкой</string>
     <string name="delay_title">Задержка отправки e-mail в минутах</string>
     <string name="disable_delay">Включить пересылку без задержки</string>
-    <string name="time_wo_delay">Время отключения задержки</string>
-    <string name="time_wo_delay_summary">По истечению задержка снова включится</string>
+    <string name="time_wo_delay">Отключить задержку на время</string>
+    <string name="time_wo_delay_summary">По истечению задержка снова включится, осталось минут:</string>
     <string name="from">" от "</string>
     <string name="delay_title_summary">0 - без задержки</string>
     <string name="control_number">Управляющий телефон</string>
-    <string name="control_number_summary">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24-часовом формате + 20\" с этого номера будет включена пересылка без задержки</string>
+    <string name="control_number_summary">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24–часовом формате + 20\"+\"+/-/=\"+\"число добавочных минут\" с этого номера будет включена пересылка без задержки на дополнительное заданное число минут. Пример: #!732+11, #!524=8, #!240-4</string>
+    <string name="at">" в "</string>
+    <string name="instant_mode_changed">Изменение времени мгновенной пересылки</string>
+    <string name="n_minutes_left">Осталось %d минут(ы)</string>
+    <string name="send_notification_on_change">Отправлять уведомление при изменении времени мгновенной пересылки</string>
 </resources>

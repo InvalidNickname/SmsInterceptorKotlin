@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.view.ActionMode
 import android.view.Menu
@@ -13,13 +14,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
+import androidx.preference.*
+import kotlin.math.roundToInt
+
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var newContext: Context? = null
+    private var seekBarUpdater: Handler? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.prefs)
@@ -33,6 +34,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onStart() {
         super.onStart()
+        seekBarUpdater = Handler()
         // кнопка получения разрешения на чтение СМС
         val smsPermission: Preference? = findPreference("sms_permission")
         val permissionCheck = ContextCompat.checkSelfPermission(newContext!!, "android.permission.RECEIVE_SMS")
@@ -46,7 +48,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
         // слушатель нажатия на кнопку получения разрешения на чтение СМС
         if (smsPermission != null) {
-            smsPermission.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference: Preference? ->
+            smsPermission.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 requestPermissions(arrayOf("android.permission.RECEIVE_SMS"), 1)
                 true
             }
@@ -54,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // кнопка открытия браузера и разрешения на вход из небезопасных приложений
         val unsafePermission: Preference? = findPreference("unsafe_permission")
         if (unsafePermission != null) {
-            unsafePermission.onPreferenceClickListener = Preference.OnPreferenceClickListener { preference: Preference? ->
+            unsafePermission.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse("https://myaccount.google.com/lesssecureapps")
                 startActivity(intent)
@@ -111,17 +113,46 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        seekBarUpdater!!.post(object : Runnable {
+            override fun run() {
+                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                val millis = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000 - System.currentTimeMillis()
+                var timeLeft = (millis / 60000.0).roundToInt()
+                if (timeLeft < 0) {
+                    timeLeft = 0
+                }
+                prefs.edit()
+                    .putInt("time_wo_delay", timeLeft)
+                    .putLong("start_immediate_sending", System.currentTimeMillis())
+                    .apply()
+                val timeWoDelay: SeekBarPreference? = findPreference("time_wo_delay")
+                if (timeWoDelay != null) {
+                    timeWoDelay.value = timeLeft
+                }
+                seekBarUpdater!!.postDelayed(this, (60 * 1000).toLong())
+            }
+        })
     }
 
     override fun onPause() {
         super.onPause()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        seekBarUpdater!!.removeCallbacksAndMessages(null)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if ("disable_delay" == key) {
-            if (sharedPreferences.getBoolean("disable_delay", false)) {
+        if ("time_wo_delay" == key) {
+            val timeWoDelay = sharedPreferences.getInt("time_wo_delay", 0)
+            if (timeWoDelay != 0) {
                 sharedPreferences.edit().putLong("start_immediate_sending", System.currentTimeMillis()).apply()
+                // если установлена отправка оповещений
+                if (sharedPreferences.getBoolean("send_notification_on_change", false)) {
+                    val to = sharedPreferences.getString("to", "")
+                    val from = sharedPreferences.getString("from", "")
+                    val password = sharedPreferences.getString("pass", "")
+                    val body = java.lang.String.format(getString(R.string.n_minutes_left), timeWoDelay)
+                    AsyncSender().execute(from, to, password, getString(R.string.instant_mode_changed), body)
+                }
             }
         }
     }

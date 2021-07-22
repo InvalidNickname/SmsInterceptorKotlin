@@ -4,32 +4,44 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Interceptor : BroadcastReceiver() {
     val ACTION = "android.provider.Telephony.SMS_RECEIVED"
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent != null && intent.action != null && ACTION.compareTo(intent.action!!, true) == 0) {
-            val pduArray: Array<Any> = intent.extras?.get("pdus") as Array<Any>
-            val messages = arrayOfNulls<SmsMessage>(pduArray.size)
-            for (i in pduArray.indices) {
-                messages[i] = SmsMessage.createFromPdu(pduArray[i] as ByteArray)
+            val extras = intent.extras
+            if (extras != null) {
+                val pduArray: Array<Any> = intent.extras?.get("pdus") as Array<Any>
+                val messages = arrayOfNulls<SmsMessage>(pduArray.size)
+                for (i in pduArray.indices) {
+                    messages[i] = SmsMessage.createFromPdu(pduArray[i] as ByteArray)
+                }
+                if (messages.isNotEmpty()) {
+                    val from = messages[0]?.displayOriginatingAddress
+
+                    val calendar = Calendar.getInstance()
+                    calendar.timeInMillis = messages[0]?.timestampMillis!!
+                    val simpleDateFormat = SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US)
+                    val timestamp = simpleDateFormat.format(calendar.time)
+
+                    val text = StringBuilder()
+                    for (message in messages) {
+                        text.append(message?.messageBody)
+                    }
+                    val body = text.toString()
+
+                    val serviceIntent = Intent(context, SendService::class.java)
+                    serviceIntent.putExtra("sms_body", body)
+                    serviceIntent.putExtra("sms_from", from)
+                    serviceIntent.putExtra("sms_time", timestamp)
+
+                    context?.startService(serviceIntent)
+                }
             }
-
-            val text = StringBuilder()
-            val from = messages[0]?.displayOriginatingAddress
-            for (message in messages) {
-                text.append(message?.messageBody)
-            }
-            val body = text.toString()
-
-            val service_intent = Intent(context, SendService::class.java)
-            service_intent.putExtra("sms_body", body)
-            service_intent.putExtra("sms_from", from)
-
-            context?.startService(service_intent)
-
-            abortBroadcast()
         }
+        abortBroadcast()
     }
 }

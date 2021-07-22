@@ -33,24 +33,28 @@
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
+            android:defaultValue=""
             android:key="to"
             android:title="@string/send_to"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            android:defaultValue=""
             android:inputType="textPassword"
             android:key="from"
             android:title="@string/send_from"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
+            android:defaultValue=""
             android:inputType="textPassword"
             android:key="pass"
             android:title="@string/from_password"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
+            android:defaultValue=""
             android:key="id"
             android:title="@string/from_id"
             app:enableCopying="false"
@@ -58,14 +62,16 @@
             app:useSimpleSummaryProvider="true" />
 
         <DropDownPreference
+            android:defaultValue="all"
             android:entries="@array/send_types"
             android:entryValues="@array/send_type_values"
-            android:key="type"
+            android:key="send_type"
             android:title="@string/sending_type"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            android:defaultValue=""
             android:key="list"
             android:summary="@string/list_help"
             android:title="@string/settings_list"
@@ -78,33 +84,33 @@
         android:title="@string/delay_cat"
         app:iconSpaceReserved="false">
 
-        <SeekBarPreference
-            android:defaultValue="0"
-            android:key="delay"
-            android:max="30"
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="delay_string"
             android:summary="@string/delay_title_summary"
             android:title="@string/delay_title"
+            app:iconSpaceReserved="false"
+            app:showSeekBarValue="true"
+            app:useSimpleSummaryProvider="true" />
+
+        <SeekBarPreference
+            android:defaultValue="0"
+            android:key="time_wo_delay"
+            android:max="20"
+            android:summary="@string/time_wo_delay_summary"
+            android:title="@string/time_wo_delay"
             app:iconSpaceReserved="false"
             app:min="0"
             app:showSeekBarValue="true" />
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="disable_delay"
-            android:title="@string/disable_delay"
-            app:iconSpaceReserved="false" />
-
-        <SeekBarPreference
-            android:defaultValue="2"
-            android:key="time_wo_delay"
-            android:max="30"
-            android:summary="@string/time_wo_delay_summary"
-            android:title="@string/time_wo_delay"
-            app:iconSpaceReserved="false"
-            app:min="2"
-            app:showSeekBarValue="true" />
+            android:key="send_notification_on_change"
+            android:title="@string/send_notification_on_change"
+            app:iconSpaceReserved="false"/>
 
         <EditTextPreference
+            android:defaultValue=""
             android:key="control_number"
             android:summary="@string/control_number_summary"
             android:title="@string/control_number"

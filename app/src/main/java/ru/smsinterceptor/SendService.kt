@@ -58,7 +58,12 @@ class SendService : Service() {
                             val notifFrom = prefs.getString("from", "")
                             val notifPass = prefs.getString("pass", "")
                             val notifBody = String.format(getString(R.string.n_minutes_left), time)
-                            AsyncSender().execute(notifFrom, notifTo, notifPass, getString(R.string.instant_mode_changed), notifBody)
+                            val id = prefs.getString("id", "")
+                            var notifSubj = getString(R.string.instant_mode_changed)
+                            if (id!!.isNotEmpty()) {
+                                notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
+                            }
+                            AsyncSender().execute(notifFrom, notifTo, notifPass, notifSubj, notifBody)
                         }
                         return START_STICKY
                     }
@@ -102,11 +107,8 @@ class SendService : Service() {
                         // время, до которого нет задержки отправки
                         val timeUntilDelay = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000
                         // если была включена пересылка без задержки и её время ещё не закончилось
-                        val woDelayTimerActive = prefs.getInt("time_wo_delay", 0) == 0 && System.currentTimeMillis() <= timeUntilDelay
-                        if (System.currentTimeMillis() > timeUntilDelay) {
-                            // время закончилось
-                            prefs.edit().putBoolean("disable_delay", false).apply()
-                        }
+                        val woDelayTimerActive = prefs.getInt("time_wo_delay", 0) != 0 && System.currentTimeMillis() <= timeUntilDelay
+                        // установленная задержка в миллисекундах
                         val delay: Long = prefs.getString("delay_string", "")!!.toLong() * 60 * 1000
                         if (delay == 0L || woDelayTimerActive) {
                             // пересылка без задержки

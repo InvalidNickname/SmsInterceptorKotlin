@@ -85,9 +85,8 @@
         app:iconSpaceReserved="false">
 
         <EditTextPreference
-            android:defaultValue="1"
+            android:defaultValue="20"
             android:key="delay_string"
-            android:summary="@string/delay_title_summary"
             android:title="@string/delay_title"
             app:iconSpaceReserved="false"
             app:showSeekBarValue="true"

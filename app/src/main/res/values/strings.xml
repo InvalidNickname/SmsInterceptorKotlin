@@ -30,5 +30,6 @@
     <string name="at">" в "</string>
     <string name="instant_mode_changed">Изменение времени мгновенной пересылки</string>
     <string name="n_minutes_left">Осталось %d минут(ы)</string>
+    <string name="n_minutes_left_id">" ,от %s</string>
     <string name="send_notification_on_change">Отправлять уведомление при изменении времени мгновенной пересылки</string>
 </resources>

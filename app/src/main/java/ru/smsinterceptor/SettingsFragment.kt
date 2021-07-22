@@ -150,8 +150,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     val to = sharedPreferences.getString("to", "")
                     val from = sharedPreferences.getString("from", "")
                     val password = sharedPreferences.getString("pass", "")
-                    val body = java.lang.String.format(getString(R.string.n_minutes_left), timeWoDelay)
-                    AsyncSender().execute(from, to, password, getString(R.string.instant_mode_changed), body)
+                    val body = String.format(getString(R.string.n_minutes_left), timeWoDelay)
+                    val id = sharedPreferences.getString("id", "")
+                    var notifSubj = getString(R.string.instant_mode_changed)
+                    if (id!!.isNotEmpty()) {
+                        notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
+                    }
+                    AsyncSender().execute(from, to, password, notifSubj, body)
                 }
             }
         }

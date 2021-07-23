@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import androidx.preference.PreferenceManager
+import ru.smsinterceptor.room.Message
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -54,16 +55,16 @@ class SendService : Service() {
                             .apply()
                         // если установлена отправка оповещений
                         if (prefs.getBoolean("send_notification_on_change", false)) {
-                            val notifTo = prefs.getString("to", "")
-                            val notifFrom = prefs.getString("from", "")
-                            val notifPass = prefs.getString("pass", "")
+                            val notifTo = prefs.getString("to", "")!!
+                            val notifFrom = prefs.getString("from", "")!!
+                            val notifPass = prefs.getString("pass", "")!!
                             val notifBody = String.format(getString(R.string.n_minutes_left), time)
-                            val id = prefs.getString("id", "")
+                            val id = prefs.getString("id", "")!!
                             var notifSubj = getString(R.string.instant_mode_changed)
-                            if (id!!.isNotEmpty()) {
+                            if (id.isNotEmpty()) {
                                 notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
                             }
-                            AsyncSender().execute(notifFrom, notifTo, notifPass, notifSubj, notifBody)
+                            AsyncDb(baseContext, Message(notifFrom, notifTo, notifPass, notifSubj, notifBody, System.currentTimeMillis())).execute()
                         }
                         return START_STICKY
                     }
@@ -113,10 +114,11 @@ class SendService : Service() {
                         val delay: Long = prefs.getString("delay_string", "")!!.toLong() * 60 * 1000
                         if (delay == 0L || woDelayTimerActive) {
                             // пересылка без задержки
-                            AsyncSender().execute(from, to, password, smsFrom, body)
+                            AsyncDb(baseContext, Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis())).execute()
                         } else {
                             // пересылка с задержкой
-                            setUpDelayed(from, to, password, smsFrom!!, body!!, delay)
+                            AsyncDb(baseContext, Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis() + delay)).execute()
+                            setUpDelayed(delay)
                         }
                     }
                 }
@@ -125,15 +127,10 @@ class SendService : Service() {
         return START_STICKY
     }
 
-    private fun setUpDelayed(from: String, to: String, password: String, sms_from: String, body: String, delay: Long) {
+    private fun setUpDelayed(delay: Long) {
         val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager?
         if (manager != null) {
             val alarmIntent = Intent(this, AlarmReceiver::class.java)
-            alarmIntent.putExtra("from", from)
-            alarmIntent.putExtra("to", to)
-            alarmIntent.putExtra("pass", password)
-            alarmIntent.putExtra("sms_from", sms_from)
-            alarmIntent.putExtra("body", body)
             alarmIntent.action = System.currentTimeMillis().toString()
             val pi = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             val timeWoDelay = SystemClock.elapsedRealtime() + delay

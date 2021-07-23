@@ -26,6 +26,12 @@
         android:title="@string/cat_main"
         app:iconSpaceReserved="false">
 
+        <Preference
+            android:key="send_all_available"
+            android:summary="@string/send_all_available_summary"
+            android:title="@string/send_all_available"
+            app:iconSpaceReserved="false" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="enable"

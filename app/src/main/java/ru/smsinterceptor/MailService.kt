@@ -45,19 +45,13 @@ class MailService {
         msg.sentDate = Calendar.getInstance().time
         val addressTo = InternetAddress.parse(to)
         msg.setRecipients(Message.RecipientType.TO, addressTo)
-        msg.addHeader("X-Mailer", "MyAppMailer")
-        msg.addHeader("Precedence", "bulk")
         msg.subject = subject
         val mp: Multipart = MimeMultipart("related")
         val bodyMsg = MimeBodyPart()
         bodyMsg.setText(text)
         mp.addBodyPart(bodyMsg)
         msg.setContent(mp)
-        try {
-            Transport.send(msg)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        Transport.send(msg)
     }
 
     private class SMTPAuthenticator(var from: String?, var password: String) : Authenticator() {

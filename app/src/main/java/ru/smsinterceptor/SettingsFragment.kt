@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import ru.smsinterceptor.room.Message
 import kotlin.math.roundToInt
 
 
@@ -73,6 +74,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         if (System.currentTimeMillis() > timeUntilDelay) {
             // время закончилось
             prefs.edit().putBoolean("disable_delay", false).apply()
+        }
+        // кнопка отправки всех сообщений из базы
+        findPreference<Preference>("send_all_available")?.setOnPreferenceClickListener {
+            AsyncSender().execute(context)
+            true
         }
         // запрет на overscroll, без него выглядит лучше
         listView.overScrollMode = View.OVER_SCROLL_NEVER
@@ -149,16 +155,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     sharedPreferences.edit().putLong("start_immediate_sending", System.currentTimeMillis()).apply()
                     // если установлена отправка оповещений
                     if (sharedPreferences.getBoolean("send_notification_on_change", false)) {
-                        val to = sharedPreferences.getString("to", "")
-                        val from = sharedPreferences.getString("from", "")
-                        val password = sharedPreferences.getString("pass", "")
+                        val to = sharedPreferences.getString("to", "")!!
+                        val from = sharedPreferences.getString("from", "")!!
+                        val password = sharedPreferences.getString("pass", "")!!
                         val body = String.format(getString(R.string.n_minutes_left), timeWoDelay)
-                        val id = sharedPreferences.getString("id", "")
+                        val id = sharedPreferences.getString("id", "")!!
                         var notifSubj = getString(R.string.instant_mode_changed)
-                        if (id!!.isNotEmpty()) {
+                        if (id.isNotEmpty()) {
                             notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
                         }
-                        AsyncSender().execute(from, to, password, notifSubj, body)
+                        AsyncDb(context, Message(from, to, password, notifSubj, body, System.currentTimeMillis())).execute()
                     }
                 }
             }

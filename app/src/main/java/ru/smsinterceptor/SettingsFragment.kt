@@ -21,6 +21,7 @@ import kotlin.math.roundToInt
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var newContext: Context? = null
     private var seekBarUpdater: Handler? = null
+    private var changePref = true
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.prefs)
@@ -141,22 +142,56 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        if ("time_wo_delay" == key) {
-            val timeWoDelay = sharedPreferences.getInt("time_wo_delay", 0)
-            if (timeWoDelay != 0) {
-                sharedPreferences.edit().putLong("start_immediate_sending", System.currentTimeMillis()).apply()
-                // если установлена отправка оповещений
-                if (sharedPreferences.getBoolean("send_notification_on_change", false)) {
-                    val to = sharedPreferences.getString("to", "")
-                    val from = sharedPreferences.getString("from", "")
-                    val password = sharedPreferences.getString("pass", "")
-                    val body = String.format(getString(R.string.n_minutes_left), timeWoDelay)
-                    val id = sharedPreferences.getString("id", "")
-                    var notifSubj = getString(R.string.instant_mode_changed)
-                    if (id!!.isNotEmpty()) {
-                        notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
+        when (key) {
+            "time_wo_delay" -> {
+                val timeWoDelay = sharedPreferences.getInt("time_wo_delay", 0)
+                if (timeWoDelay != 0) {
+                    sharedPreferences.edit().putLong("start_immediate_sending", System.currentTimeMillis()).apply()
+                    // если установлена отправка оповещений
+                    if (sharedPreferences.getBoolean("send_notification_on_change", false)) {
+                        val to = sharedPreferences.getString("to", "")
+                        val from = sharedPreferences.getString("from", "")
+                        val password = sharedPreferences.getString("pass", "")
+                        val body = String.format(getString(R.string.n_minutes_left), timeWoDelay)
+                        val id = sharedPreferences.getString("id", "")
+                        var notifSubj = getString(R.string.instant_mode_changed)
+                        if (id!!.isNotEmpty()) {
+                            notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
+                        }
+                        AsyncSender().execute(from, to, password, notifSubj, body)
                     }
-                    AsyncSender().execute(from, to, password, notifSubj, body)
+                }
+            }
+            "from_temp" -> {
+                // изменение гугл адреса отправителя
+                if (changePref) {
+                    changePref = false
+                    val from = sharedPreferences.getString("from_temp", "")
+                    // пустая строка - не менять
+                    if (from!!.isEmpty()) return
+                    sharedPreferences.edit().putString("from", from).apply()
+                    val fromPref = findPreference<EditTextPreference>("from_temp")
+                    if (fromPref != null) {
+                        fromPref.text = ""
+                    }
+                } else {
+                    changePref = true
+                }
+            }
+            "pass_temp" -> {
+                // изменение пароля отправителя
+                if (changePref) {
+                    changePref = false
+                    val pass = sharedPreferences.getString("pass_temp", "")
+                    // пустая строка - не менять
+                    if (pass!!.isEmpty()) return
+                    sharedPreferences.edit().putString("pass", pass).apply()
+                    val passPref = findPreference<EditTextPreference>("pass_temp")
+                    if (passPref != null) {
+                        passPref.text = ""
+                    }
+                } else {
+                    changePref = true
                 }
             }
         }

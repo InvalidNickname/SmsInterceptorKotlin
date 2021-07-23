@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsMessage
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,7 +15,11 @@ class Interceptor : BroadcastReceiver() {
         if (intent != null && intent.action != null && ACTION.compareTo(intent.action!!, true) == 0) {
             val extras = intent.extras
             if (extras != null) {
-                val pduArray: Array<Any> = intent.extras?.get("pdus") as Array<Any>
+                val pduArray: Array<*>? = intent.extras?.get("pdus") as Array<*>?
+                if (pduArray == null) {
+                    Log.e("SmsInterceptor", "Null PDU received");
+                    return
+                }
                 val messages = arrayOfNulls<SmsMessage>(pduArray.size)
                 for (i in pduArray.indices) {
                     messages[i] = SmsMessage.createFromPdu(pduArray[i] as ByteArray)

@@ -23,11 +23,11 @@ class SendService : Service() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
             if (prefs.getBoolean("enable", true)) {
                 var send = false
-                var sms_from = intent.getStringExtra("sms_from")
+                var smsFrom = intent.getStringExtra("sms_from")
                 val body = intent.getStringExtra("sms_body")
 
                 // если получена СМС с управляющего номера
-                if (sms_from != null && sms_from == prefs.getString("control_number", "")) {
+                if (smsFrom != null && smsFrom == prefs.getString("control_number", "")) {
                     val timeZone = TimeZone.getTimeZone("UTC")
                     val c = Calendar.getInstance(timeZone)
                     val simpleDateFormat = SimpleDateFormat("HH", Locale.US)
@@ -70,13 +70,14 @@ class SendService : Service() {
                 }
                 val list = prefs.getString("list", "")!!.split(",".toRegex()).toTypedArray()
                 when (prefs.getString("type", "all")) {
-                    "all" ->                         // пересылать всё
+                    "all" ->
+                        // пересылать всё
                         send = true
                     "black_list" -> {
                         // чёрный список
                         send = true
                         for (number in list) {
-                            if (sms_from == number.trim { it <= ' ' }) {
+                            if (smsFrom == number.trim { it <= ' ' }) {
                                 send = false
                                 break
                             }
@@ -86,7 +87,7 @@ class SendService : Service() {
                         // белый список
                         send = false
                         for (number in list) {
-                            if (sms_from == number.trim { it <= ' ' }) {
+                            if (smsFrom == number.trim { it <= ' ' }) {
                                 send = true
                                 break
                             }
@@ -100,22 +101,22 @@ class SendService : Service() {
                     val password = prefs.getString("pass", "")
                     val timestamp = intent.getStringExtra("sms_time")
                     if (id!!.isNotEmpty()) {
-                        sms_from += getString(R.string.from) + id
+                        smsFrom += getString(R.string.from) + id
                     }
-                    sms_from += getString(R.string.at) + timestamp
+                    smsFrom += getString(R.string.at) + timestamp
                     if (to!!.isNotEmpty() && from!!.isNotEmpty() && password!!.isNotEmpty()) {
                         // время, до которого нет задержки отправки
                         val timeUntilDelay = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000
                         // если была включена пересылка без задержки и её время ещё не закончилось
-                        val woDelayTimerActive = prefs.getInt("time_wo_delay", 0) != 0 && System.currentTimeMillis() <= timeUntilDelay
+                        val woDelayTimerActive = System.currentTimeMillis() <= timeUntilDelay
                         // установленная задержка в миллисекундах
                         val delay: Long = prefs.getString("delay_string", "")!!.toLong() * 60 * 1000
                         if (delay == 0L || woDelayTimerActive) {
                             // пересылка без задержки
-                            AsyncSender().execute(from, to, password, sms_from, body)
+                            AsyncSender().execute(from, to, password, smsFrom, body)
                         } else {
                             // пересылка с задержкой
-                            setUpDelayed(from, to, password, sms_from!!, body!!, delay)
+                            setUpDelayed(from, to, password, smsFrom!!, body!!, delay)
                         }
                     }
                 }

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">SMS Interceptor</string>
-    <string name="get_permission">Получить разрешение на чтение СМС</string>
-    <string name="permission_not_granted">Разрешение на чтение СМС не получено</string>
-    <string name="permission_granted">Разрешение на чтение СМС получено</string>
+    <string name="get_sms_permission">Получить разрешение на чтение СМС</string>
+    <string name="permission_not_granted">Разрешение не получено</string>
+    <string name="permission_granted">Разрешение получено</string>
     <string name="send_to">E-mail для пересылки</string>
     <string name="send_from">E-mail отправителя (Google аккаунт)</string>
     <string name="from_password">Пароль отправителя (Google аккаунт)</string>
@@ -31,5 +31,5 @@
     <string name="n_minutes_left_id">, от %s</string>
     <string name="send_notification_on_change">Отправлять уведомление при изменении времени мгновенной пересылки</string>
     <string name="send_all_available">Отправить всё</string>
-    <string name="send_all_available_summary">Отправить все полученные, но по каким-то причинам не отправленные сообщения</string>
+    <string name="send_all_available_summary">Отправить все полученные, но по каким-то причинам не отправленные сообщения. Сейчас не отправлено: %d</string>
 </resources>

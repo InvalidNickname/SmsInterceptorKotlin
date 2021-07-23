@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
@@ -15,6 +16,8 @@ import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.preference.*
+import androidx.room.Room
+import ru.smsinterceptor.room.Database
 import ru.smsinterceptor.room.Message
 import kotlin.math.roundToInt
 
@@ -76,9 +79,26 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             prefs.edit().putBoolean("disable_delay", false).apply()
         }
         // кнопка отправки всех сообщений из базы
-        findPreference<Preference>("send_all_available")?.setOnPreferenceClickListener {
-            AsyncSender().execute(context)
-            true
+        val sendAllAvailable = findPreference<Preference>("send_all_available")
+        if (sendAllAvailable != null) {
+            sendAllAvailable.setOnPreferenceClickListener {
+                AsyncSender().execute(context)
+                true
+            }
+            // количество неотправленных сообщений
+            object : AsyncTask<Void, Void?, Void?>() {
+                var rowCount = 0
+                override fun doInBackground(vararg voids: Void): Void? {
+                    val db: Database = Room.databaseBuilder(context!!, Database::class.java, "messages").build()
+                    rowCount = db.messageDao()?.getRowCount() ?: 0
+                    return null
+                }
+
+                override fun onPostExecute(result: Void?) {
+                    sendAllAvailable.summary = String.format(getString(R.string.send_all_available_summary), rowCount)
+                    super.onPostExecute(result)
+                }
+            }.execute()
         }
         // запрет на overscroll, без него выглядит лучше
         listView.overScrollMode = View.OVER_SCROLL_NEVER
@@ -164,7 +184,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         if (id.isNotEmpty()) {
                             notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
                         }
-                        AsyncDb(context, Message(from, to, password, notifSubj, body, System.currentTimeMillis())).execute()
+                        AsyncDb(Message(from, to, password, notifSubj, body, System.currentTimeMillis())).execute(context)
                     }
                 }
             }

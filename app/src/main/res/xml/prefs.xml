@@ -9,8 +9,8 @@
         <Preference
             android:key="sms_permission"
             android:summary="@string/permission_not_granted"
-            android:title="@string/get_permission"
-            app:enableCopying="true"
+            android:title="@string/get_sms_permission"
+            app:enableCopying="false"
             app:iconSpaceReserved="false" />
 
         <Preference

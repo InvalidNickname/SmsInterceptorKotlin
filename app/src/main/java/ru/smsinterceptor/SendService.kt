@@ -64,7 +64,7 @@ class SendService : Service() {
                             if (id.isNotEmpty()) {
                                 notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
                             }
-                            AsyncDb(baseContext, Message(notifFrom, notifTo, notifPass, notifSubj, notifBody, System.currentTimeMillis())).execute()
+                            AsyncDb(Message(notifFrom, notifTo, notifPass, notifSubj, notifBody, System.currentTimeMillis())).execute(baseContext)
                         }
                         return START_STICKY
                     }
@@ -114,10 +114,10 @@ class SendService : Service() {
                         val delay: Long = prefs.getString("delay_string", "")!!.toLong() * 60 * 1000
                         if (delay == 0L || woDelayTimerActive) {
                             // пересылка без задержки
-                            AsyncDb(baseContext, Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis())).execute()
+                            AsyncDb(Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis())).execute(baseContext)
                         } else {
                             // пересылка с задержкой
-                            AsyncDb(baseContext, Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis() + delay)).execute()
+                            AsyncDb(Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis() + delay)).execute(baseContext)
                             setUpDelayed(delay)
                         }
                     }
@@ -132,7 +132,7 @@ class SendService : Service() {
         if (manager != null) {
             val alarmIntent = Intent(this, AlarmReceiver::class.java)
             alarmIntent.action = System.currentTimeMillis().toString()
-            val pi = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val pi = PendingIntent.getBroadcast(this, (Math.random() * 10000).toInt(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
             val timeWoDelay = SystemClock.elapsedRealtime() + delay
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 manager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, timeWoDelay, pi)

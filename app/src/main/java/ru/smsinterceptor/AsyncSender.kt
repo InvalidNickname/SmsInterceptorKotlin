@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
 import android.os.SystemClock
+import androidx.preference.PreferenceManager
 import androidx.room.Room
 import ru.smsinterceptor.room.Database
 import javax.mail.MessagingException
@@ -14,6 +15,7 @@ import javax.mail.MessagingException
 
 class AsyncSender : AsyncTask<Context, Void, Void>() {
     override fun doInBackground(vararg context: Context): Void? {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context[0])
         val db = Room.databaseBuilder(context[0], Database::class.java, "messages").build()
         val messages = db.messageDao()?.all
         if (messages != null) {
@@ -24,8 +26,17 @@ class AsyncSender : AsyncTask<Context, Void, Void>() {
                         try {
                             mailer.send()
                             db.messageDao()?.delete(message)
+                            val count = preferences.getInt("database_size", 1) - 1
+                            preferences.edit().putInt("database_size", count).apply()
                         } catch (e: MessagingException) {
-                            setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                            val error = e.toString()
+                            if (error.contains("AuthenticationFailedException")) {
+                                db.messageDao()?.delete(message)
+                                val count = preferences.getInt("database_size", 1) - 1
+                                preferences.edit().putInt("database_size", count).apply()
+                            } else {
+                                setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                            }
                             e.printStackTrace()
                         }
                     }

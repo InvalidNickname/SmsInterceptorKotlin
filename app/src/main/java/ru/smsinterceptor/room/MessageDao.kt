@@ -15,7 +15,4 @@ interface MessageDao {
 
     @Delete
     fun delete(vararg messages: Message?)
-
-    @Query("SELECT COUNT(*) FROM message")
-    fun getRowCount(): Int
 }

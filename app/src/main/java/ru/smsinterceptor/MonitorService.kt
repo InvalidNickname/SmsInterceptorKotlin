@@ -36,12 +36,12 @@ class MonitorService : Service() {
             val notificationBuilder = NotificationCompat.Builder(this, "ru.smsinterceptor")
             val notification = notificationBuilder
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle("Перехватчик СМС работает в фоновом режиме")
                 .build()
             startForeground(1, notification)
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {

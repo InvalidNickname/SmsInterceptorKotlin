@@ -5,21 +5,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
-import android.text.InputType
-import android.view.ActionMode
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.preference.*
-import androidx.room.Room
-import ru.smsinterceptor.room.Database
 import ru.smsinterceptor.room.Message
 import kotlin.math.roundToInt
 
@@ -86,9 +78,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 true
             }
         }
-        // маски пароля для акка отправителя
-        findPreference<EditTextPreference?>("from")?.setOnBindEditTextListener { editText: EditText -> disableCopying(editText) }
-        findPreference<EditTextPreference?>("pass")?.setOnBindEditTextListener { editText: EditText -> disableCopying(editText) }
         // переключатель мгновенной пересылки
         val prefs = PreferenceManager.getDefaultSharedPreferences(newContext)
         val timeUntilDelay = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000
@@ -104,20 +93,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 true
             }
             // количество неотправленных сообщений
-            object : AsyncTask<Void, Void?, Void?>() {
-                var rowCount = 0
-                override fun doInBackground(vararg voids: Void): Void? {
-                    val db: Database = Room.databaseBuilder(context!!, Database::class.java, "messages").build()
-                    rowCount = db.messageDao()?.getRowCount() ?: 0
-                    db.close()
-                    return null
-                }
-
-                override fun onPostExecute(result: Void?) {
-                    sendAllAvailable.summary = String.format(getString(R.string.send_all_available_summary), rowCount)
-                    super.onPostExecute(result)
-                }
-            }.execute()
+            sendAllAvailable.summary = String.format(getString(R.string.send_all_available_summary), prefs.getInt("database_size", 0))
         }
         // установка текста версии
         var versionName: String? = "unknown"
@@ -141,27 +117,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
             }
         }
-    }
-
-    private fun disableCopying(editText: EditText) {
-        editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        editText.customSelectionActionModeCallback = object : ActionMode.Callback {
-            override fun onCreateActionMode(actionMode: ActionMode, menu: Menu): Boolean {
-                return false
-            }
-
-            override fun onPrepareActionMode(actionMode: ActionMode, menu: Menu): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(actionMode: ActionMode, item: MenuItem): Boolean {
-                return false
-            }
-
-            override fun onDestroyActionMode(actionMode: ActionMode) {}
-        }
-        editText.setTextIsSelectable(false)
-        editText.isLongClickable = false
     }
 
     override fun onResume() {
@@ -246,6 +201,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 } else {
                     changePref = true
                 }
+            }
+            "database_size" -> {
+                findPreference<Preference>("send_all_available")?.summary =
+                    String.format(getString(R.string.send_all_available_summary), sharedPreferences.getInt("database_size", 0))
             }
         }
     }

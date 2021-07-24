@@ -34,7 +34,7 @@ class MailService {
         props["mail.mime.charset"] = "utf-8"
         val session: Session
         val auth: Authenticator = SMTPAuthenticator(from, password!!)
-        session = Session.getDefaultInstance(props, auth)
+        session = Session.getInstance(props, auth)
         session.debug = true
         val msg: Message = MimeMessage(session)
         try {

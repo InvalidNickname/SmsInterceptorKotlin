@@ -11,7 +11,10 @@ import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.preference.*
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SeekBarPreference
 import ru.smsinterceptor.room.Message
 import kotlin.math.roundToInt
 
@@ -177,11 +180,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     val from = sharedPreferences.getString("from_temp", "")
                     // пустая строка - не менять
                     if (from!!.isEmpty()) return
-                    sharedPreferences.edit().putString("from", from).apply()
-                    val fromPref = findPreference<EditTextPreference>("from_temp")
-                    if (fromPref != null) {
-                        fromPref.text = ""
-                    }
+                    sharedPreferences.edit()
+                        .putString("from", from)
+                        .putString("from_temp", "")
+                        .apply()
                 } else {
                     changePref = true
                 }
@@ -193,11 +195,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     val pass = sharedPreferences.getString("pass_temp", "")
                     // пустая строка - не менять
                     if (pass!!.isEmpty()) return
-                    sharedPreferences.edit().putString("pass", pass).apply()
-                    val passPref = findPreference<EditTextPreference>("pass_temp")
-                    if (passPref != null) {
-                        passPref.text = ""
-                    }
+                    sharedPreferences.edit()
+                        .putString("pass", pass)
+                        .putString("pass_temp", "")
+                        .apply()
                 } else {
                     changePref = true
                 }

@@ -14,36 +14,55 @@ import javax.mail.MessagingException
 
 
 class AsyncSender : AsyncTask<Context, Void, Void>() {
+
+    private val RUNNING = 1
+    private val STOPPED = -1
+    private val NEED_MORE = 1
+    private val NO_MORE = -1
+
     override fun doInBackground(vararg context: Context): Void? {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context[0])
-        val db = Room.databaseBuilder(context[0], Database::class.java, "messages").build()
-        val messages = db.messageDao()?.all
-        if (messages != null) {
-            for (message in messages) {
-                if (message != null) {
-                    if (message.time <= System.currentTimeMillis()) {
-                        val mailer = MailService(message.from, message.to, message.password, message.smsFrom, message.body)
-                        try {
-                            mailer.send()
-                            db.messageDao()?.delete(message)
-                            val count = preferences.getInt("database_size", 1) - 1
-                            preferences.edit().putInt("database_size", count).apply()
-                        } catch (e: MessagingException) {
-                            val error = e.toString()
-                            if (error.contains("AuthenticationFailedException")) {
+        // если уже запущен, ставим флаг, что появилась новая инфа и вырубаемся
+        if (preferences.getInt("sender_status", STOPPED) == RUNNING) {
+            preferences.edit().putInt("sender_more", NEED_MORE).apply()
+            return null
+        }
+        // ставим флаг, что таск запущен и обрабатывает инфу
+        preferences.edit().putInt("sender_status", RUNNING).apply()
+        do {
+            // ставим флаг, что доп инфы нет
+            preferences.edit().putInt("sender_more", NO_MORE).apply()
+            val db = Room.databaseBuilder(context[0], Database::class.java, "messages").build()
+            val messages = db.messageDao()?.all?.reversed()
+            if (messages != null) {
+                for (message in messages) {
+                    if (message != null) {
+                        if (message.time <= System.currentTimeMillis()) {
+                            val mailer = MailService(message.from, message.to, message.password, message.smsFrom, message.body)
+                            try {
+                                mailer.send()
                                 db.messageDao()?.delete(message)
                                 val count = preferences.getInt("database_size", 1) - 1
                                 preferences.edit().putInt("database_size", count).apply()
-                            } else {
-                                setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                            } catch (e: MessagingException) {
+                                val error = e.toString()
+                                if (error.contains("AuthenticationFailedException")) {
+                                    db.messageDao()?.delete(message)
+                                    val count = preferences.getInt("database_size", 1) - 1
+                                    preferences.edit().putInt("database_size", count).apply()
+                                } else {
+                                    setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                                }
+                                e.printStackTrace()
                             }
-                            e.printStackTrace()
                         }
                     }
                 }
             }
-        }
-        db.close()
+            db.close()
+        } while (preferences.getInt("sender_more", NO_MORE) == NEED_MORE) // обрабатываем, пока есть еще инфа
+        // заканчиваем обработку
+        preferences.edit().putInt("sender_status", STOPPED).apply()
         return null
     }
 

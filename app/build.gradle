@@ -11,8 +11,8 @@ android {
         applicationId "ru.smsinterceptor"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 10
-        versionName "1.9"
+        versionCode 11
+        versionName "1.10"
     }
 
     buildTypes {
@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.sun.mail:android-mail:1.6.5'
+    implementation 'com.sun.mail:android-activation:1.6.5'
     implementation "androidx.room:room-runtime:2.3.0"
     annotationProcessor "androidx.room:room-compiler:2.3.0"
     kapt "androidx.room:room-compiler:2.3.0"

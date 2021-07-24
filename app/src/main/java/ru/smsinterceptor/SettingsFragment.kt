@@ -42,6 +42,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onStart() {
         super.onStart()
         seekBarUpdater = Handler()
+        // запуск монитора
+        val monitorIntent = Intent(context, MonitorService::class.java)
+        requireContext().startService(monitorIntent)
         // кнопка получения разрешения на чтение СМС
         val smsPermission: Preference? = findPreference("sms_permission")
         val permissionCheck = ContextCompat.checkSelfPermission(newContext!!, "android.permission.RECEIVE_SMS")

@@ -14,7 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 
 class MonitorService : Service() {
-    lateinit var smsReceiver: BroadcastReceiver
+    private lateinit var smsReceiver: BroadcastReceiver
 
     override fun onBind(intent: Intent): IBinder? {
         return null

@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -36,7 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onStart() {
         super.onStart()
-        seekBarUpdater = Handler()
+        seekBarUpdater = Handler(Looper.getMainLooper())
         // запуск монитора
         val monitorIntent = Intent(context, MonitorService::class.java)
         requireContext().startService(monitorIntent)
@@ -92,7 +93,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         val sendAllAvailable = findPreference<Preference>("send_all_available")
         if (sendAllAvailable != null) {
             sendAllAvailable.setOnPreferenceClickListener {
-                AsyncSender().execute(context)
+                AsyncSender().execute(requireContext())
                 true
             }
             // количество неотправленных сообщений
@@ -169,7 +170,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         if (id.isNotEmpty()) {
                             notifSubj += String.format(getString(R.string.n_minutes_left_id), id)
                         }
-                        AsyncDb(Message(from, to, password, notifSubj, body, System.currentTimeMillis())).execute(context)
+                        AsyncDb(Message(from, to, password, notifSubj, body, System.currentTimeMillis())).execute(requireContext())
                     }
                 }
             }

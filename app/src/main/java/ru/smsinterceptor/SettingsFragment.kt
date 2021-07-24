@@ -119,6 +119,14 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
             }.execute()
         }
+        // установка текста версии
+        var versionName: String? = "unknown"
+        try {
+            versionName = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        findPreference<Preference>("version")?.title = String.format(resources.getString(R.string.pref_version), versionName)
         // запрет на overscroll, без него выглядит лучше
         listView.overScrollMode = View.OVER_SCROLL_NEVER
     }

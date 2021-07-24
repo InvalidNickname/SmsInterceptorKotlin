@@ -130,4 +130,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:summary="@string/pref_cat_other"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="version"
+            android:title="@string/pref_version"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

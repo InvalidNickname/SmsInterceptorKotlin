@@ -34,4 +34,6 @@
     <string name="send_all_available">Отправить всё</string>
     <string name="send_all_available_summary">Отправить все полученные, но по каким-то причинам не отправленные сообщения. Сейчас не отправлено: %d</string>
     <string name="battery_permission_summary">Найдите приложение в списке и запретите оптимизацию</string>
+    <string name="pref_cat_other">Другое</string>
+    <string name="pref_version">Версия %s</string>
 </resources>

@@ -61,7 +61,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // кнопка получения разрешения на игнор оптимизации батареи, api >= 23
         val batteryPermission = findPreference<Preference>("battery_permission")
         if (batteryPermission != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // слушатель нажатия на кнопку получения разрешения на чтение СМС
+            // слушатель нажатия на кнопку разрешения на игнор оптимизации батареи
             batteryPermission.setOnPreferenceClickListener {
                 val intent = Intent()
                 intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
@@ -206,6 +206,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             "database_size" -> {
                 findPreference<Preference>("send_all_available")?.summary =
                     String.format(getString(R.string.send_all_available_summary), sharedPreferences.getInt("database_size", 0))
+            }
+            "enable" -> {
+                val enable = sharedPreferences.getBoolean("enable", true)
+                if (!enable) {
+                    sharedPreferences.edit().putInt("sender_status", -1).apply()
+                }
             }
         }
     }

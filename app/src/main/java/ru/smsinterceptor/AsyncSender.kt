@@ -29,6 +29,8 @@ class AsyncSender : AsyncTask<Context, Void, Void>() {
         }
         // ставим флаг, что таск запущен и обрабатывает инфу
         preferences.edit().putInt("sender_status", RUNNING).apply()
+        // установлен таймер на следующий вызов таска
+        var timerSet = false
         do {
             // ставим флаг, что доп инфы нет
             preferences.edit().putInt("sender_more", NO_MORE).apply()
@@ -51,7 +53,10 @@ class AsyncSender : AsyncTask<Context, Void, Void>() {
                                     val count = preferences.getInt("database_size", 1) - 1
                                     preferences.edit().putInt("database_size", count).apply()
                                 } else {
-                                    setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                                    if (!timerSet) {
+                                        setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                                        timerSet = true
+                                    }
                                 }
                                 e.printStackTrace()
                             }

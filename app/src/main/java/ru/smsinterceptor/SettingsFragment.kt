@@ -6,8 +6,10 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.text.InputType
 import android.view.ActionMode
 import android.view.Menu
@@ -58,6 +60,19 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 true
             }
         }
+        // кнопка получения разрешения на игнор оптимизации батареи, api >= 23
+        val batteryPermission = findPreference<Preference>("battery_permission")
+        if (batteryPermission != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // слушатель нажатия на кнопку получения разрешения на чтение СМС
+            batteryPermission.setOnPreferenceClickListener {
+                val intent = Intent()
+                intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+                startActivity(intent)
+                true
+            }
+        } else if (batteryPermission != null) {
+            batteryPermission.isVisible = false
+        }
         // кнопка открытия браузера и разрешения на вход из небезопасных приложений
         val unsafePermission: Preference? = findPreference("unsafe_permission")
         if (unsafePermission != null) {
@@ -91,6 +106,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 override fun doInBackground(vararg voids: Void): Void? {
                     val db: Database = Room.databaseBuilder(context!!, Database::class.java, "messages").build()
                     rowCount = db.messageDao()?.getRowCount() ?: 0
+                    db.close()
                     return null
                 }
 

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
+import android.os.PowerManager
 import android.os.SystemClock
 import androidx.room.Room
 import ru.smsinterceptor.room.Database
@@ -14,6 +15,9 @@ import javax.mail.MessagingException
 
 class AsyncSender : AsyncTask<Context, Void, Void>() {
     override fun doInBackground(vararg context: Context): Void? {
+        val powerManager = context[0].getSystemService(Context.POWER_SERVICE) as PowerManager?
+        val wakeLock = powerManager?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SmsInterceptor:Main")
+        wakeLock?.acquire(10 * 60 * 10000)
         val db = Room.databaseBuilder(context[0], Database::class.java, "messages").build()
         val messages = db.messageDao()?.all
         if (messages != null) {
@@ -26,12 +30,15 @@ class AsyncSender : AsyncTask<Context, Void, Void>() {
                             db.messageDao()?.delete(message)
                         } catch (e: MessagingException) {
                             setUpDelayed(context[0], 10 * 60 * 1000) // через 10 минут
+                            wakeLock?.release()
                             e.printStackTrace()
                         }
                     }
                 }
             }
         }
+        db.close()
+        wakeLock?.release()
         return null
     }
 

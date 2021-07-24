@@ -13,6 +13,7 @@ class AsyncDb(private var message: Message?) : AsyncTask<Context, Void, Void>() 
         this.context = context[0]
         val db = Room.databaseBuilder(this.context, Database::class.java, "messages").build()
         db.messageDao()?.insertAll(message)
+        db.close()
         return null
     }
 

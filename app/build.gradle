@@ -1,9 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
-
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -12,8 +11,8 @@ android {
         applicationId "ru.smsinterceptor"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 6
-        versionName "1.5"
+        versionCode 7
+        versionName "1.6"
     }
 
     buildTypes {

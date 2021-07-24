@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SMS Interceptor</string>
     <string name="get_sms_permission">Получить разрешение на чтение СМС</string>
+    <string name="get_battery_permission">Получить разрешение на запуск приложения в спящем режиме</string>
     <string name="permission_not_granted">Разрешение не получено</string>
     <string name="permission_granted">Разрешение получено</string>
     <string name="send_to">E-mail для пересылки</string>
@@ -32,4 +33,5 @@
     <string name="send_notification_on_change">Отправлять уведомление при изменении времени мгновенной пересылки</string>
     <string name="send_all_available">Отправить всё</string>
     <string name="send_all_available_summary">Отправить все полученные, но по каким-то причинам не отправленные сообщения. Сейчас не отправлено: %d</string>
+    <string name="battery_permission_summary">Найдите приложение в списке и запретите оптимизацию</string>
 </resources>

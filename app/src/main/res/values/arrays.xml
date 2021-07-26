@@ -10,4 +10,21 @@
         <item>black_list</item>
         <item>white_list</item>
     </string-array>
+    <string-array name="bank_addresses">
+        <item name="Сбербанк">900</item>
+        <item name="Сбербанк">9000</item>
+        <item name="МегаФон-Банк">5555</item>
+        <item name="МегаФон-Банк">5117</item>
+        <item name="МегаФон-Банк">MegaFon OFD</item>
+        <item name="ФОРА-ОНЛАЙН">FORA-BANK</item>
+        <item name="МТС Банк">MTS-Bank</item>
+        <item name="МТС Банк">MTS_bill</item>
+        <item name="МТС Деньги">MTS.dengi</item>
+        <item name="МТС Деньги">MTSB.login</item>
+        <item name="Альфа Банк">Alfa-Bank</item>
+        <item name="Тинькофф">Tinkoff</item>
+        <item name="Почта Банк">POCHTABANK</item>
+        <item name="Газпром Банк">Telecard</item>
+        <item name="ВТБ">VTB</item>
+    </string-array>
 </resources>

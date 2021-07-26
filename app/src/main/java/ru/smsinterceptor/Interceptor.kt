@@ -8,11 +8,12 @@ import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class Interceptor : BroadcastReceiver() {
-    private val ACTION = "android.provider.Telephony.SMS_RECEIVED"
+    private val action = "android.provider.Telephony.SMS_RECEIVED"
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent != null && intent.action != null && ACTION.compareTo(intent.action!!, true) == 0) {
+        if (intent != null && intent.action != null && action.compareTo(intent.action!!, true) == 0) {
             val extras = intent.extras
             if (extras != null) {
                 val pduArray: Array<*>? = intent.extras?.get("pdus") as Array<*>?

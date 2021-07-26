@@ -15,27 +15,21 @@ import javax.mail.MessagingException
 
 
 class AsyncSender {
-
-    private val RUNNING = 1
-    private val STOPPED = -1
-    private val NEED_MORE = 1
-    private val NO_MORE = -1
-
     fun execute(context: Context) {
         GlobalScope.launch {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             // если уже запущен, ставим флаг, что появилась новая инфа и вырубаемся
-            if (preferences.getInt("sender_status", STOPPED) == RUNNING) {
-                preferences.edit().putInt("sender_more", NEED_MORE).apply()
+            if (preferences.getBoolean("sender_status", false)) {
+                preferences.edit().putBoolean("sender_more", true).apply()
                 return@launch
             }
             // ставим флаг, что таск запущен и обрабатывает инфу
-            preferences.edit().putInt("sender_status", RUNNING).apply()
+            preferences.edit().putBoolean("sender_status", true).apply()
             // установлен таймер на следующий вызов таска
             var timerSet = false
             do {
                 // ставим флаг, что доп инфы нет
-                preferences.edit().putInt("sender_more", NO_MORE).apply()
+                preferences.edit().putBoolean("sender_more", false).apply()
                 val db = Room.databaseBuilder(context, Database::class.java, "messages").build()
                 val messages = db.messageDao()?.all?.reversed()
                 if (messages != null) {
@@ -67,9 +61,9 @@ class AsyncSender {
                     }
                 }
                 db.close()
-            } while (preferences.getInt("sender_more", NO_MORE) == NEED_MORE) // обрабатываем, пока есть еще инфа
+            } while (preferences.getBoolean("sender_more", false)) // обрабатываем, пока есть еще инфа
             // заканчиваем обработку
-            preferences.edit().putInt("sender_status", STOPPED).apply()
+            preferences.edit().putBoolean("sender_status", false).apply()
         }
     }
 

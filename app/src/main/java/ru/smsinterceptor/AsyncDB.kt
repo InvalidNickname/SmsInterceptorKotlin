@@ -9,7 +9,7 @@ import ru.smsinterceptor.room.Message
 
 class AsyncDb(private val message: Message?) {
     fun execute(context: Context) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             val job = GlobalScope.async {
                 val db = Room.databaseBuilder(context, Database::class.java, "messages").build()
                 db.messageDao()?.insertAll(message)

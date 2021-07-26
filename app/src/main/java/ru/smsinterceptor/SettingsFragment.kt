@@ -1,6 +1,5 @@
 package ru.smsinterceptor
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -21,18 +20,12 @@ import kotlin.math.roundToInt
 
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
-    private var newContext: Context? = null
-    private var seekBarUpdater: Handler? = null
+    private lateinit var seekBarUpdater: Handler
     private var changePref = true
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.prefs)
-        PreferenceManager.setDefaultValues(newContext, R.xml.prefs, false)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        this.newContext = context
+        PreferenceManager.setDefaultValues(context, R.xml.prefs, false)
     }
 
     override fun onStart() {
@@ -43,7 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         requireContext().startService(monitorIntent)
         // кнопка получения разрешения на чтение СМС
         val smsPermission: Preference? = findPreference("sms_permission")
-        val permissionCheck = ContextCompat.checkSelfPermission(newContext!!, "android.permission.RECEIVE_SMS")
+        val permissionCheck = ContextCompat.checkSelfPermission(requireContext(), "android.permission.RECEIVE_SMS")
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf("android.permission.RECEIVE_SMS"), 1)
         } else {
@@ -83,7 +76,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
         }
         // переключатель мгновенной пересылки
-        val prefs = PreferenceManager.getDefaultSharedPreferences(newContext)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val timeUntilDelay = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000
         if (System.currentTimeMillis() > timeUntilDelay) {
             // время закончилось
@@ -126,7 +119,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-        seekBarUpdater!!.post(object : Runnable {
+        seekBarUpdater.post(object : Runnable {
             override fun run() {
                 val prefs = PreferenceManager.getDefaultSharedPreferences(context)
                 val millis = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000 - System.currentTimeMillis()
@@ -142,7 +135,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 if (timeWoDelay != null) {
                     timeWoDelay.value = timeLeft
                 }
-                seekBarUpdater!!.postDelayed(this, (60 * 1000).toLong())
+                seekBarUpdater.postDelayed(this, (60 * 1000).toLong())
             }
         })
     }
@@ -150,7 +143,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onPause() {
         super.onPause()
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        seekBarUpdater!!.removeCallbacksAndMessages(null)
+        seekBarUpdater.removeCallbacksAndMessages(null)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -178,13 +171,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 // изменение гугл адреса отправителя
                 if (changePref) {
                     changePref = false
-                    val from = sharedPreferences.getString("from_temp", "")
+                    val from = sharedPreferences.getString("from_temp", "")!!
                     // пустая строка - не менять
-                    if (from!!.isEmpty()) return
-                    sharedPreferences.edit()
-                        .putString("from", from)
-                        .putString("from_temp", "")
-                        .apply()
+                    if (from.isNotEmpty()) {
+                        sharedPreferences.edit().putString("from", from).putString("from_temp", "").apply()
+                    }
                 } else {
                     changePref = true
                 }
@@ -193,13 +184,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 // изменение пароля отправителя
                 if (changePref) {
                     changePref = false
-                    val pass = sharedPreferences.getString("pass_temp", "")
+                    val pass = sharedPreferences.getString("pass_temp", "")!!
                     // пустая строка - не менять
-                    if (pass!!.isEmpty()) return
-                    sharedPreferences.edit()
-                        .putString("pass", pass)
-                        .putString("pass_temp", "")
-                        .apply()
+                    if (pass.isNotEmpty()) {
+                        sharedPreferences.edit().putString("pass", pass).putString("pass_temp", "").apply()
+                    }
                 } else {
                     changePref = true
                 }
@@ -209,9 +198,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     String.format(getString(R.string.send_all_available_summary), sharedPreferences.getInt("database_size", 0))
             }
             "enable" -> {
-                val enable = sharedPreferences.getBoolean("enable", true)
-                if (!enable) {
-                    sharedPreferences.edit().putInt("sender_status", -1).apply()
+                if (!sharedPreferences.getBoolean("enable", true)) {
+                    sharedPreferences.edit().putBoolean("sender_status", false).apply()
                 }
             }
         }

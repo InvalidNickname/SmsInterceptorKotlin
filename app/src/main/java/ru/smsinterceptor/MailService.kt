@@ -8,21 +8,13 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
 
-class MailService {
-    private var to: String? = null
-    private var subject: String? = null
-    private var from: String? = null
-    private var password: String? = null
-    private var text: String? = null
-
-    constructor(from: String?, to: String?, password: String?, subject: String?, text: String?) {
-        this.text = text
-        this.subject = subject
-        this.from = from
-        this.password = password
-        this.to = to
-    }
-
+class MailService(
+    private var from: String,
+    private var to: String,
+    private var password: String,
+    private var subject: String,
+    private var text: String
+) {
     @Throws(MessagingException::class)
     fun send() {
         val props = Properties()
@@ -33,7 +25,7 @@ class MailService {
         props["mail.smtp.port"] = "587"
         props["mail.mime.charset"] = "utf-8"
         val session: Session
-        val auth: Authenticator = SMTPAuthenticator(from, password!!)
+        val auth: Authenticator = SMTPAuthenticator(from, password)
         session = Session.getInstance(props, auth)
         session.debug = true
         val msg: Message = MimeMessage(session)

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SMS Interceptor</string>
     <string name="get_sms_permission">Получить разрешение на чтение СМС</string>
     <string name="get_battery_permission">Получить разрешение на запуск приложения в спящем режиме</string>
@@ -25,7 +25,7 @@
     <string name="time_wo_delay_summary">По истечению задержка снова включится, осталось минут:</string>
     <string name="from">" от "</string>
     <string name="control_number">Управляющий телефон</string>
-    <string name="control_number_summary">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24–часовом формате + 20\"+\"+/-/=\"+\"число добавочных минут\" с этого номера будет включена пересылка без задержки на дополнительное заданное число минут. Пример: #!732+11, #!524=8, #!240-4</string>
+    <string name="control_number_summary" tools:ignore="TypographyDashes">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24–часовом формате + 20\"+\"+/-/=\"+\"число добавочных минут\" с этого номера будет включена пересылка без задержки на дополнительное заданное число минут. Пример: #!732+11, #!524=8, #!240-4</string>
     <string name="at">" в "</string>
     <string name="instant_mode_changed">Изменение времени мгновенной пересылки</string>
     <string name="n_minutes_left">Осталось %d минут(ы)</string>
@@ -36,4 +36,7 @@
     <string name="battery_permission_summary">Найдите приложение в списке и запретите оптимизацию</string>
     <string name="pref_cat_other">Другое</string>
     <string name="pref_version">Версия %s</string>
+    <string name="unknown_version">неизвестно</string>
+    <string name="about_password">Укажите пароль от аккаунта Google, с которого будет осуществляться отправка e-mail. Если на аккаунте включена двухэтапная аутентификация, создайте пароль приложения и укажите здесь его</string>
+    <string name="password_dialog_title">Пароль отправителя</string>
 </resources>

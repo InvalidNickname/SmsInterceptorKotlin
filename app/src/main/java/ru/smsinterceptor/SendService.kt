@@ -101,10 +101,14 @@ class SendService : Service() {
                     val id = prefs.getString("id", "")
                     val password = prefs.getString("pass", "")
                     val timestamp = intent.getStringExtra("sms_time")
-                    if (id!!.isNotEmpty()) {
-                        smsFrom += getString(R.string.from) + id
+                    if (smsFrom != null) {
+                        if (id!!.isNotEmpty()) {
+                            smsFrom += getString(R.string.from) + id
+                        }
+                        smsFrom += getString(R.string.at) + timestamp
+                    } else {
+                        smsFrom = ""
                     }
-                    smsFrom += getString(R.string.at) + timestamp
                     if (to!!.isNotEmpty() && from!!.isNotEmpty() && password!!.isNotEmpty()) {
                         // время, до которого нет задержки отправки
                         val timeUntilDelay = prefs.getLong("start_immediate_sending", 0) + prefs.getInt("time_wo_delay", 0) * 60 * 1000
@@ -114,10 +118,10 @@ class SendService : Service() {
                         val delay: Long = prefs.getString("delay_string", "")!!.toLong() * 60 * 1000
                         if (delay == 0L || woDelayTimerActive) {
                             // пересылка без задержки
-                            AsyncDb(Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis())).execute(baseContext)
+                            AsyncDb(Message(from, to, password, smsFrom, body!!, System.currentTimeMillis())).execute(baseContext)
                         } else {
                             // пересылка с задержкой
-                            AsyncDb(Message(from, to, password, smsFrom!!, body!!, System.currentTimeMillis() + delay)).execute(baseContext)
+                            AsyncDb(Message(from, to, password, smsFrom, body!!, System.currentTimeMillis() + delay)).execute(baseContext)
                             setUpDelayed(delay)
                         }
                     }

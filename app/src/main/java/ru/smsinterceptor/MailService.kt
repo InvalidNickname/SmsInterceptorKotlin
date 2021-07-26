@@ -1,5 +1,6 @@
 package ru.smsinterceptor
 
+import java.io.FileNotFoundException
 import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
@@ -15,7 +16,7 @@ class MailService(
     private var subject: String,
     private var text: String
 ) {
-    @Throws(MessagingException::class)
+    @Throws(MessagingException::class, FileNotFoundException::class)
     fun send() {
         val props = Properties()
         props["mail.smtp.host"] = "smtp.gmail.com"
@@ -24,10 +25,8 @@ class MailService(
         props["mail.smtp.auth"] = "true"
         props["mail.smtp.port"] = "587"
         props["mail.mime.charset"] = "utf-8"
-        val session: Session
-        val auth: Authenticator = SMTPAuthenticator(from, password)
-        session = Session.getInstance(props, auth)
-        session.debug = true
+        val auth = SMTPAuthenticator(from, password)
+        val session = Session.getInstance(props, auth).apply { debug = true }
         val msg: Message = MimeMessage(session)
         try {
             msg.setFrom(InternetAddress("sms.interceptor", "sms.interceptor"))
@@ -38,10 +37,8 @@ class MailService(
         val addressTo = InternetAddress.parse(to)
         msg.setRecipients(Message.RecipientType.TO, addressTo)
         msg.subject = subject
-        val mp: Multipart = MimeMultipart("related")
-        val bodyMsg = MimeBodyPart()
-        bodyMsg.setText(text)
-        mp.addBodyPart(bodyMsg)
+        val bodyMsg = MimeBodyPart().apply { setText(text) }
+        val mp = MimeMultipart("related").apply { addBodyPart(bodyMsg) }
         msg.setContent(mp)
         Transport.send(msg)
     }

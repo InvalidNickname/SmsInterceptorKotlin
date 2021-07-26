@@ -29,7 +29,7 @@ class MonitorService : Service() {
         registerReceiver(smsReceiver, intentFilter)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundNew()
         } else {

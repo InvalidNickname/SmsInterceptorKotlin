@@ -8,15 +8,17 @@ import android.os.Build
 import android.os.SystemClock
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.smsinterceptor.room.Database
+import java.io.FileNotFoundException
 import javax.mail.MessagingException
 
 
 class AsyncSender {
     fun execute(context: Context) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             // если уже запущен, ставим флаг, что появилась новая инфа и вырубаемся
             if (preferences.getBoolean("sender_status", false)) {
@@ -54,6 +56,8 @@ class AsyncSender {
                                             timerSet = true
                                         }
                                     }
+                                    e.printStackTrace()
+                                } catch (e: FileNotFoundException) {
                                     e.printStackTrace()
                                 }
                             }

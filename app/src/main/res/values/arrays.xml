@@ -26,5 +26,12 @@
         <item name="Почта Банк">POCHTABANK</item>
         <item name="Газпром Банк">Telecard</item>
         <item name="ВТБ">VTB</item>
+        <item name="РНКБ">RNCB</item>
+        <item name="РСХБ">RSHB</item>
+        <item name="РСХБ">SBP</item>
+        <item name="Совкомбанк">Sovcombank</item>
+        <item name="ХКФ Банк">HomeCredit</item>
+        <item name="МИнБанк">MInB</item>
+        <item name="Банк Уралcиб">URALSIB</item>
     </string-array>
 </resources>

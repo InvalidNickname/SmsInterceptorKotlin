@@ -16,17 +16,22 @@ import ru.smsinterceptor.room.Message
 import kotlin.math.roundToInt
 
 
+/**
+ * Фрагмент настроек приложения
+ */
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var seekBarUpdater: Handler
     private var changePref = true
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        // заполняем настройки
         addPreferencesFromResource(R.xml.prefs)
         PreferenceManager.setDefaultValues(context, R.xml.prefs, false)
     }
 
     override fun onStart() {
         super.onStart()
+        // хендлер для обновления ползунка оставшегося времени без задержки
         seekBarUpdater = Handler(Looper.getMainLooper())
         // запуск монитора
         val monitorIntent = Intent(context, MonitorService::class.java)
@@ -37,6 +42,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         listView.overScrollMode = View.OVER_SCROLL_NEVER
     }
 
+    /**
+     * Обновление различных настроек
+     */
     private fun updatePrefs() {
         updateReceiveSmsPermissionButton()
         updateOptimizationButton()
@@ -46,6 +54,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         updateIdText()
     }
 
+    /**
+     * Обновление кнопки получения разрешения на чтение СМС
+     */
     private fun updateReceiveSmsPermissionButton() {
         // кнопка получения разрешения на чтение СМС
         val smsPermission = findPreference<Preference>("sms_permission")
@@ -54,6 +65,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             requestPermissions(arrayOf("android.permission.RECEIVE_SMS"), 1)
         } else {
             if (smsPermission != null) {
+                // если разрешение получено - отключаем кнопку
                 smsPermission.setSummary(R.string.permission_granted)
                 smsPermission.isEnabled = false
             }
@@ -61,12 +73,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // слушатель нажатия на кнопку получения разрешения на чтение СМС
         if (smsPermission != null) {
             smsPermission.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                // при нажатии запрашиваем разрешение на чтение СМС
                 requestPermissions(arrayOf("android.permission.RECEIVE_SMS"), 1)
                 true
             }
         }
     }
 
+    /**
+     * Обновление кнопки получения разрешения на игнор оптимизации батареи
+     */
     private fun updateOptimizationButton() {
         // кнопка получения разрешения на игнор оптимизации батареи, api >= 23
         val batteryPermission = findPreference<Preference>("battery_permission")
@@ -74,21 +90,27 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // слушатель нажатия на кнопку разрешения на игнор оптимизации батареи
                 batteryPermission.setOnPreferenceClickListener {
+                    // при нажатии открываем настройки оптимизации батареи
                     val intent = Intent()
                     intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
                     startActivity(intent)
                     true
                 }
             } else {
+                // если не подходит по версии, скрываем
                 batteryPermission.isVisible = false
             }
         }
     }
 
+    /**
+     * Обновление кнопки открытия браузера и разрешения на вход из небезопасных приложений
+     */
     private fun updateLessSecureAppsButton() {
         // кнопка открытия браузера и разрешения на вход из небезопасных приложений
         val unsafePermission = findPreference<Preference>("unsafe_permission")
         unsafePermission?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            // при нажатии открываем https://myaccount.google.com/lesssecureapps
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse("https://myaccount.google.com/lesssecureapps")
             startActivity(intent)
@@ -96,12 +118,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
     }
 
+    /**
+     * Обновление кнопки отправки всех сообщений из базы
+     */
     private fun updateSendAllButton() {
         // кнопка отправки всех сообщений из базы
         val sendAllAvailable = findPreference<Preference>("send_all_available")
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (sendAllAvailable != null) {
             sendAllAvailable.setOnPreferenceClickListener {
+                // при нажатии запускаем AsyncSender
                 AsyncSender().execute(requireContext())
                 true
             }
@@ -110,6 +136,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
     }
 
+    /**
+     * Обновление текста версии
+     */
     private fun updateVersionText() {
         // установка текста версии
         var versionName = getString(R.string.unknown_version)
@@ -121,6 +150,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         findPreference<Preference>("version")?.title = String.format(resources.getString(R.string.pref_version), versionName)
     }
 
+    /**
+     * Обновление настройки идентификатора пользователя
+     */
     private fun updateIdText() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         if (prefs.getString("id", "") == "NOT_SET") {
@@ -133,8 +165,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         if (requestCode == 1) {
             if (grantResults.isNotEmpty() || grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // получено разрешение на чтение СМС
                 val smsPermission = findPreference<Preference>("sms_permission")
                 if (smsPermission != null) {
+                    // делаем кнопку неактивной
                     smsPermission.setSummary(R.string.permission_granted)
                     smsPermission.isEnabled = false
                 }
@@ -145,6 +179,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        // обновление значения на полоске оставшегося времени без задержки
         seekBarUpdater.post(object : Runnable {
             override fun run() {
                 val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -159,6 +194,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                     .apply()
                 val timeWoDelay = findPreference<SeekBarPreference>("time_wo_delay")
                 timeWoDelay?.value = timeLeft
+                // через минуту обновляем снова
                 seekBarUpdater.postDelayed(this, 60000L)
             }
         })
@@ -173,10 +209,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             "time_wo_delay" -> {
+                // перетянули ползунок оставшегося времени без задержки
                 val timeWoDelay = sharedPreferences.getInt("time_wo_delay", 0)
                 if (timeWoDelay != 0) {
                     sharedPreferences.edit().putLong("start_immediate_sending", System.currentTimeMillis()).apply()
-                    // если установлена отправка оповещений
+                    // если установлена отправка оповещений, отправляем
                     if (sharedPreferences.getBoolean("send_notification_on_change", false)) {
                         val to = sharedPreferences.getString("to", "")!!
                         val from = sharedPreferences.getString("from", "")!!
@@ -214,15 +251,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 changePref = !changePref
             }
             "database_size" -> {
+                // если изменился размер базы, меняем надпись на кнопке отправки всех сообщений из базы
                 val sendPref = findPreference<Preference>("send_all_available")
                 sendPref?.summary = String.format(getString(R.string.send_all_available_summary), sharedPreferences.getInt("database_size", 0))
             }
             "enable" -> {
+                // переключатель отправки
                 if (!sharedPreferences.getBoolean("enable", true)) {
                     sharedPreferences.edit().putBoolean("sender_status", false).apply()
                 }
             }
             "id" -> {
+                // изменен идентификатор пользователя
                 val idPref = findPreference<EditTextPreference>("id")
                 idPref?.summary = sharedPreferences.getString("id", "")
             }

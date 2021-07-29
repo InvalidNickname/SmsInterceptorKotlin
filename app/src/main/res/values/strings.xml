@@ -39,4 +39,5 @@
     <string name="unknown_version">неизвестно</string>
     <string name="about_password">Укажите пароль от аккаунта Google, с которого будет осуществляться отправка e-mail. Если на аккаунте включена двухэтапная аутентификация, создайте пароль приложения и укажите здесь его</string>
     <string name="password_dialog_title">Пароль отправителя</string>
+    <string name="notification_title">Перехватчик СМС работает в фоновом режиме</string>
 </resources>

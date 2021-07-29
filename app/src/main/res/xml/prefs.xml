@@ -134,7 +134,7 @@
 
     <PreferenceCategory
         android:icon="@drawable/ic_miscellaneous"
-        android:summary="@string/pref_cat_other"
+        android:title="@string/pref_cat_other"
         app:iconSpaceReserved="true">
 
         <Preference

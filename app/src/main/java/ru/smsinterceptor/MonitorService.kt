@@ -13,6 +13,11 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 
+
+/**
+ * Сервис для регистрации Interceptor. Т.к. он ловит действие android.provider.Telephony.SMS_RECEIVED, ему необходимв постоянная
+ * регистрация в сервисе или активности. Цель этого сервиса - оставаться запущенным все время для регистрации Interceptor
+ */
 class MonitorService : Service() {
     private lateinit var smsReceiver: BroadcastReceiver
 
@@ -22,22 +27,28 @@ class MonitorService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        // создаем фильтр для регистрации
         val intentFilter = IntentFilter()
+        // максимальный приоритет
         intentFilter.priority = 2147483647
         intentFilter.addAction("android.intent.action.PHONE_STATE")
         smsReceiver = Interceptor()
+        // регистрируем Interceptor
         registerReceiver(smsReceiver, intentFilter)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // создаем уведомление, необходимое для перевода сервиса в foreground
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // уведомления нового типа
             startForegroundNew()
         } else {
+            // уведомления старого типа
             val notificationBuilder = NotificationCompat.Builder(this, "ru.smsinterceptor")
             val notification = notificationBuilder
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Перехватчик СМС работает в фоновом режиме")
+                .setContentTitle(getString(R.string.notification_title))
                 .build()
             startForeground(1, notification)
         }
@@ -49,10 +60,15 @@ class MonitorService : Service() {
         unregisterReceiver(smsReceiver)
     }
 
+    /**
+     * Создание уведомления нового типа
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private fun startForegroundNew() {
         val chan = NotificationChannel("ru.smsinterceptor", "interceptor-background", NotificationManager.IMPORTANCE_NONE)
+        // синенький светодиодик :3
         chan.lightColor = Color.BLUE
+        // уведомление не должно отображатьсян на экране блокировки
         chan.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
         if (manager != null) {
@@ -61,7 +77,7 @@ class MonitorService : Service() {
             val notification = notificationBuilder
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Перехватчик СМС работает в фоновом режиме")
+                .setContentTitle(getString(R.string.notification_title))
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build()

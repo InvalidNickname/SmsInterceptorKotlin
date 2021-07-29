@@ -35,7 +35,9 @@
         <receiver android:name=".AlarmReceiver" />
 
         <service android:name=".SendService" />
-        <service android:name=".MonitorService" />
+        <service
+            android:name=".MonitorService"
+            android:process=":MonitorSmsInterceptor" />
     </application>
 
 </manifest>

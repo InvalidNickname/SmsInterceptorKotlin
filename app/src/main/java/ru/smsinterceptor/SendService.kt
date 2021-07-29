@@ -14,6 +14,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+/**
+ * Сервис, отвечающий за обработку и пересылку сообщения
+ */
 class SendService : Service() {
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -22,6 +25,7 @@ class SendService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
             val prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
+            // если пользователь отключил пересылку, ничего не проверяем и не отправляем
             if (prefs.getBoolean("enable", true)) {
                 var send = false
                 var smsFrom = intent.getStringExtra("sms_from")
@@ -29,6 +33,7 @@ class SendService : Service() {
 
                 // если получена СМС с управляющего номера
                 if (smsFrom != null && smsFrom == prefs.getString("control_number", "")) {
+                    // обрабатываем содержание СМС и проверяем на соответствие правилам
                     val timeZone = TimeZone.getTimeZone("UTC")
                     val c = Calendar.getInstance(timeZone)
                     val simpleDateFormat = SimpleDateFormat("HH", Locale.US)
@@ -39,7 +44,7 @@ class SendService : Service() {
                     }
                     val hours = simpleDateFormat.format(c.time).toInt() + 20
                     if (body != null && body == "#!$dayOfWeek$hours") {
-                        // и соответствует содержание, включаем пересылку без задержки
+                        // меняем время пересылки без задержки
                         var time = body.substring(6).toInt()
                         if (body[5] == '+') {
                             time += prefs.getInt("time_wo_delay", 0)
@@ -53,7 +58,7 @@ class SendService : Service() {
                             .putLong("start_immediate_sending", System.currentTimeMillis())
                             .putInt("time_wo_delay", time)
                             .apply()
-                        // если установлена отправка оповещений
+                        // если установлена отправка оповещений, отправляем
                         if (prefs.getBoolean("send_notification_on_change", false)) {
                             val notifTo = prefs.getString("to", "")!!
                             val notifFrom = prefs.getString("from", "")!!
@@ -69,6 +74,7 @@ class SendService : Service() {
                         return START_STICKY
                     }
                 }
+                // получаем белый/черный список
                 val list = prefs.getString("list", "")!!.split(",".toRegex()).toTypedArray()
                 when (prefs.getString("type", "all")) {
                     "all" ->
@@ -79,6 +85,7 @@ class SendService : Service() {
                         send = true
                         for (number in list) {
                             if (smsFrom == number.trim { it <= ' ' }) {
+                                // номер в черном списке, не пересылаем
                                 send = false
                                 break
                             }
@@ -89,12 +96,14 @@ class SendService : Service() {
                         send = false
                         for (number in list) {
                             if (smsFrom == number.trim { it <= ' ' }) {
+                                // номер в белом списке, пересылаем
                                 send = true
                                 break
                             }
                         }
                     }
                 }
+                // если по итогу сообщение надо отослать, отсылаем
                 if (send) {
                     val to = prefs.getString("to", "")
                     val from = prefs.getString("from", "")
@@ -103,6 +112,7 @@ class SendService : Service() {
                     val timestamp = intent.getStringExtra("sms_time")
                     if (smsFrom != null) {
                         if (id!!.isNotEmpty()) {
+                            // если задан идентификатор, добавляем
                             smsFrom += getString(R.string.from) + id
                         }
                         smsFrom += getString(R.string.at) + timestamp
@@ -131,6 +141,10 @@ class SendService : Service() {
         return START_NOT_STICKY
     }
 
+    /**
+     * Устанавливает таймер на delay для вызова AsyncSender
+     * @param delay время задержки таймера
+     */
     private fun setUpDelayed(delay: Long) {
         val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager?
         if (manager != null) {

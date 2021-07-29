@@ -4,6 +4,15 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Класс сообщения для базы данных
+ * @property from почта отправителя
+ * @property to почта получателя
+ * @property password пароль отправителя
+ * @property smsFrom номер или имя отправителя SMS
+ * @property body текст сообщения
+ * @property time время, когда надо отправить это сообщение
+ */
 @Entity
 class Message(
     @field:ColumnInfo(name = "from") var from: String,

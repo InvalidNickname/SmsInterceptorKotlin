@@ -9,6 +9,14 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
 
+/**
+ * Класс, пересылающий e-mail сообщения на почтовый сервер goolge
+ * @property from почта отправителя
+ * @property to почта получателя
+ * @property password пароль отправителя
+ * @property subject тема письма
+ * @property text текст письма
+ */
 class MailService(
     private var from: String,
     private var to: String,
@@ -16,6 +24,9 @@ class MailService(
     private var subject: String,
     private var text: String
 ) {
+    /**
+     * Отправить выбранное сообщение
+     */
     @Throws(MessagingException::class, FileNotFoundException::class)
     fun send() {
         val props = Properties()
@@ -27,6 +38,7 @@ class MailService(
         props["mail.mime.charset"] = "utf-8"
         val auth = SMTPAuthenticator(from, password)
         val session = Session.getInstance(props, auth).apply { debug = true }
+        // собираем сообщение
         val msg: Message = MimeMessage(session)
         try {
             msg.setFrom(InternetAddress("sms.interceptor", "sms.interceptor"))
@@ -40,9 +52,15 @@ class MailService(
         val bodyMsg = MimeBodyPart().apply { setText(text) }
         val mp = MimeMultipart("related").apply { addBodyPart(bodyMsg) }
         msg.setContent(mp)
+        // отправляем
         Transport.send(msg)
     }
 
+    /**
+     * Простой аутентификатор по логину/паролю
+     * @property from почта от Google аккаунта
+     * @property password пароль от Google аккаунта
+     */
     private class SMTPAuthenticator(var from: String?, var password: String) : Authenticator() {
         override fun getPasswordAuthentication(): PasswordAuthentication {
             return PasswordAuthentication(from, password)

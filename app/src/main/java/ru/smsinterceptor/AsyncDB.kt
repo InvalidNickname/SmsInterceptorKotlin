@@ -7,7 +7,15 @@ import kotlinx.coroutines.*
 import ru.smsinterceptor.room.Database
 import ru.smsinterceptor.room.Message
 
+/**
+ * Класс для асинронного добавления записей-сообщений в базу данных
+ * @property message сообщение, которое необходимо добавить
+ */
 class AsyncDb(private val message: Message?) {
+    /**
+     * Добавить выбранное сообщение в базу
+     * @param context контект приложения
+     */
     fun execute(context: Context) {
         GlobalScope.launch(Dispatchers.IO) {
             val job = GlobalScope.async {
@@ -20,6 +28,7 @@ class AsyncDb(private val message: Message?) {
                 db.close()
             }
             job.await()
+            // имитация executeOnExecutor из AsyncTask-а
             withContext(Dispatchers.Main) {
                 AsyncSender().execute(context)
             }

@@ -66,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         } else {
             if (smsPermission != null) {
                 // если разрешение получено - отключаем кнопку
-                smsPermission.setSummary(R.string.permission_granted)
+                smsPermission.setSummary(R.string.sms_permission_granted)
                 smsPermission.isEnabled = false
             }
         }
@@ -147,7 +147,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
-        findPreference<Preference>("version")?.title = String.format(resources.getString(R.string.pref_version), versionName)
+        findPreference<Preference>("version")?.title = String.format(resources.getString(R.string.version_title), versionName)
     }
 
     /**
@@ -169,7 +169,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 val smsPermission = findPreference<Preference>("sms_permission")
                 if (smsPermission != null) {
                     // делаем кнопку неактивной
-                    smsPermission.setSummary(R.string.permission_granted)
+                    smsPermission.setSummary(R.string.sms_permission_granted)
                     smsPermission.isEnabled = false
                 }
             }

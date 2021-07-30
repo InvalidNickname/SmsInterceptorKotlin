@@ -35,9 +35,6 @@ class MonitorService : Service() {
         smsReceiver = Interceptor()
         // регистрируем Interceptor
         registerReceiver(smsReceiver, intentFilter)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // создаем уведомление, необходимое для перевода сервиса в foreground
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // уведомления нового типа
@@ -52,6 +49,9 @@ class MonitorService : Service() {
                 .build()
             startForeground(1, notification)
         }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY
     }
 

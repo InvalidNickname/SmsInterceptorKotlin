@@ -4,27 +4,27 @@
 
     <PreferenceCategory
         android:icon="@drawable/ic_warning"
-        android:title="@string/cat_perms"
+        android:title="@string/category_permissions_title"
         app:iconSpaceReserved="true">
 
         <Preference
             android:key="sms_permission"
-            android:summary="@string/permission_not_granted"
-            android:title="@string/get_sms_permission"
+            android:summary="@string/sms_permission_summary"
+            android:title="@string/sms_permission_title"
             app:enableCopying="false"
             app:iconSpaceReserved="false" />
 
         <Preference
             android:key="battery_permission"
             android:summary="@string/battery_permission_summary"
-            android:title="@string/get_battery_permission"
+            android:title="@string/battery_permission_title"
             app:enableCopying="false"
             app:iconSpaceReserved="false" />
 
         <Preference
             android:key="unsafe_permission"
-            android:summary="@string/link_help"
-            android:title="@string/link"
+            android:summary="@string/unsafe_permission_summary"
+            android:title="@string/unsafe_permission_title"
             app:enableCopying="false"
             app:iconSpaceReserved="false" />
 
@@ -32,26 +32,26 @@
 
     <PreferenceCategory
         android:icon="@drawable/ic_send"
-        android:title="@string/cat_main"
+        android:title="@string/category_main_title"
         app:iconSpaceReserved="true">
 
         <Preference
             android:key="send_all_available"
             android:summary="@string/send_all_available_summary"
-            android:title="@string/send_all_available"
+            android:title="@string/send_all_available_title"
             app:iconSpaceReserved="false" />
 
         <SwitchPreference
             android:defaultValue="true"
             android:key="enable"
-            android:title="@string/enable_sending"
+            android:title="@string/enable_title"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue=""
             android:inputType="textEmailAddress"
             android:key="to"
-            android:title="@string/send_to"
+            android:title="@string/to_title"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
@@ -59,21 +59,21 @@
             android:defaultValue=""
             android:inputType="textEmailAddress"
             android:key="from_temp"
-            android:title="@string/send_from"
+            android:title="@string/from_temp_title"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue=""
-            android:dialogMessage="@string/about_password"
-            android:dialogTitle="@string/password_dialog_title"
+            android:dialogMessage="@string/pass_temp_dialog"
+            android:dialogTitle="@string/pass_temp_dialog_title"
             android:key="pass_temp"
-            android:title="@string/from_password"
+            android:title="@string/pass_temp_title"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue="NOT_SET"
             android:key="id"
-            android:title="@string/from_id"
+            android:title="@string/id_title"
             app:iconSpaceReserved="false"/>
 
         <DropDownPreference
@@ -81,29 +81,36 @@
             android:entries="@array/send_types"
             android:entryValues="@array/send_type_values"
             android:key="send_type"
-            android:title="@string/sending_type"
+            android:title="@string/send_type_title"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
             android:defaultValue=""
             android:key="list"
-            android:summary="@string/list_help"
-            android:title="@string/settings_list"
+            android:summary="@string/list_summary"
+            android:title="@string/list_title"
             app:enableCopying="false"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="bank_auto_send"
+            android:title="@string/bank_auto_send_title"
+            android:summary="@string/bank_auto_send_summary"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:icon="@drawable/ic_delay"
-        android:title="@string/delay_cat"
+        android:title="@string/category_delay_title"
         app:iconSpaceReserved="true">
 
         <EditTextPreference
             android:defaultValue="20"
             android:key="delay_string"
-            android:title="@string/delay_title"
+            android:title="@string/delay_string_title"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
 
@@ -112,7 +119,7 @@
             android:key="time_wo_delay"
             android:max="20"
             android:summary="@string/time_wo_delay_summary"
-            android:title="@string/time_wo_delay"
+            android:title="@string/time_wo_delay_title"
             app:iconSpaceReserved="false"
             app:min="0"
             app:showSeekBarValue="true" />
@@ -120,26 +127,26 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="send_notification_on_change"
-            android:title="@string/send_notification_on_change"
+            android:title="@string/send_notification_on_change_title"
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:defaultValue=""
-            android:dialogMessage="@string/control_number_summary"
+            android:dialogMessage="@string/control_number_dialog"
             android:key="control_number"
-            android:title="@string/control_number"
+            android:title="@string/control_number_title"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:icon="@drawable/ic_miscellaneous"
-        android:title="@string/pref_cat_other"
+        android:title="@string/category_other_title"
         app:iconSpaceReserved="true">
 
         <Preference
             android:key="version"
-            android:title="@string/pref_version"
+            android:title="@string/version_title"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>

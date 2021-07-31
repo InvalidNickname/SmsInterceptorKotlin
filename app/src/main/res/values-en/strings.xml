@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SMS Interceptor</string>
+
+    <string name="sms_permission_title">Get permission on receiving SMS</string>
+    <string name="sms_permission_summary">Permission not granted</string>
+    <string name="sms_permission_granted">Permission granted</string>
+
+    <string name="battery_permission_title">Get permission on starting app when screen is off</string>
+    <string name="battery_permission_summary">Find this app in the list and forbid optimization</string>
+
+    <string name="to_title">Receiver\'s e-mail</string>
+
+    <string name="from_temp_title">Sender\'s e-mail (Google account)</string>
+
+    <string name="pass_temp_title">Sender\'s password (Google account)</string>
+    <string name="pass_temp_dialog_title">Sender\'s password</string>
+    <string name="pass_temp_dialog">Type the password to sender\'s Google account. If two-step authentication is enabled, create an application password and type it here</string>
+
+    <string name="unsafe_permission_title">Grant access from less secure apps</string>
+
+    <string name="enable_title">Enable sending</string>
+
+    <string name="send_type_title">Sending mode</string>
+    <string name="send_all">Send all</string>
+    <string name="black_list">Black list</string>
+    <string name="white_list">White list</string>
+
+    <string name="id_title">Device ID</string>
+
+    <string name="list_title">List of addresses for lists</string>
+    <string name="list_summary">List addresses separated by commas here. It will only work with black/white list sending mode</string>
+
+    <string name="category_permissions_title">Required permissions</string>
+    <string name="category_main_title">Sending settings</string>
+    <string name="category_delay_title">Delay controls</string>
+    <string name="category_other_title">Other</string>
+
+    <string name="delay_string_title">E-mail sending delay in minutes</string>
+
+    <string name="time_wo_delay_title">Disable delay for…</string>
+    <string name="time_wo_delay_summary">After this time delay will turn on again:</string>
+
+    <string name="control_number_title">Phone-controller</string>
+    <string name="control_number_dialog">After receiving SMS of type #!\"number of day of week\"+\"current hours UTC+0 in 24h + 20\"+\"+/-/=\"+\"minutes to add/subtract/set\" from this number the time of sending without delay will be changed based on SMS content. Example: #!732+11, #!524=8, #!240-4</string>
+
+    <string name="send_all_available_title">Send all</string>
+    <string name="send_all_available_summary">Send all received, but for any reason not sent SMS. Currently not sent: %d</string>
+
+    <string name="send_notification_on_change_title">Send notification if the time of sending without delay was changed</string>
+
+    <string name="bank_auto_send_title">Auto-send SMS from banks</string>
+    <string name="bank_auto_send_summary">The list of banks is set in advance and can be incomplete</string>
+
+    <string name="version_title">Version %s</string>
+    <string name="unknown_version">unknown</string>
+
+    <string name="notification_title">SMS Interceptor is working in background</string>
+
+    <string name="instant_mode_changed">Time of sending without delay changed</string>
+    <string name="n_minutes_left">%d minute(s) left</string>
+    <string name="n_minutes_left_id">, from %s</string>
+    <string name="from">" from "</string>
+    <string name="at">" at "</string>
+</resources>

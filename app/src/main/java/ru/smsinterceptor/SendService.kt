@@ -74,8 +74,18 @@ class SendService : Service() {
                         return START_STICKY
                     }
                 }
+                // если включена авто-отправка СМС из банков
+                if (prefs.getBoolean("bank_auto_send", true)) {
+                    val addresses = resources.getStringArray(R.array.bank_addresses)
+                    for (address in addresses) {
+                        if (smsFrom == address.trim()) {
+                            // это сообщение из банка, пересылаем
+                            send = true
+                        }
+                    }
+                }
                 // получаем белый/черный список
-                val list = prefs.getString("list", "")!!.split(",".toRegex()).toTypedArray()
+                val list = prefs.getString("list", "")!!.split(',').toTypedArray()
                 when (prefs.getString("type", "all")) {
                     "all" ->
                         // пересылать всё
@@ -84,8 +94,9 @@ class SendService : Service() {
                         // чёрный список
                         send = true
                         for (number in list) {
-                            if (smsFrom == number.trim { it <= ' ' }) {
+                            if (smsFrom == number.trim()) {
                                 // номер в черном списке, не пересылаем
+                                // даже если это сообщение из банка, банк в черном списке, так что не пересылаем
                                 send = false
                                 break
                             }

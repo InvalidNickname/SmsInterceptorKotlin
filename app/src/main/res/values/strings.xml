@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">SMS Interceptor</string>
+    <string name="app_name">Перехватчик СМС</string>
 
     <string name="sms_permission_title">Получить разрешение на чтение СМС</string>
     <string name="sms_permission_summary">Разрешение не получено</string>
@@ -17,7 +17,7 @@
     <string name="pass_temp_dialog">Укажите пароль от аккаунта Google, с которого будет осуществляться отправка e-mail. Если на аккаунте включена двухэтапная аутентификация, создайте пароль приложения и укажите здесь его</string>
 
     <string name="unsafe_permission_title">Дать доступ к входу из небезопасных приложений</string>
-    <string name="unsafe_permission_summary">https://myaccount.google.com/lesssecureapps</string>
+    <string name="unsafe_permission_summary" translatable="false">https://myaccount.google.com/lesssecureapps</string>
 
     <string name="enable_title">Включить пересылку</string>
 
@@ -26,7 +26,7 @@
     <string name="black_list">Чёрный список</string>
     <string name="white_list">Белый список</string>
 
-    <string name="id_title">Идентификатор отправителя</string>
+    <string name="id_title">Идентификатор устройства</string>
 
     <string name="list_title">Список номеров для настройки</string>
     <string name="list_summary">Список через запятую, работает при выбранном типе пересылки \"белый\" или \"чёрный\" список</string>
@@ -42,7 +42,7 @@
     <string name="time_wo_delay_summary">По истечению задержка снова включится, осталось минут:</string>
 
     <string name="control_number_title">Управляющий телефон</string>
-    <string name="control_number_dialog" tools:ignore="TypographyDashes">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24–часовом формате + 20\"+\"+/-/=\"+\"число добавочных минут\" с этого номера будет включена пересылка без задержки на дополнительное заданное число минут. Пример: #!732+11, #!524=8, #!240-4</string>
+    <string name="control_number_dialog" tools:ignore="TypographyDashes">При получении СМС вида #!\"номер дня недели\"+\"часы по UTC+0 в 24–часовом формате + 20\"+\"+/-/=\"+\"число добавочных минут\" с этого номера время пересылки без задержки будет изменено в соответствии с содержанием СМС. Пример: #!732+11, #!524=8, #!240-4</string>
 
     <string name="send_all_available_title">Отправить всё</string>
     <string name="send_all_available_summary">Отправить все полученные, но по каким-то причинам не отправленные сообщения. Сейчас не отправлено: %d</string>

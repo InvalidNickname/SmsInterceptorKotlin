@@ -9,6 +9,9 @@
     <string name="battery_permission_title">Get permission on starting app when screen is off</string>
     <string name="battery_permission_summary">Find this app in the list and forbid optimization</string>
 
+    <string name="other_security_permission">Other device settings</string>
+    <string name="other_security_permission_summary">Check if app doesn\'t work correct: e-mails not sent or notification disappears</string>
+
     <string name="to_title">Receiver\'s e-mail</string>
 
     <string name="from_temp_title">Sender\'s e-mail (Google account)</string>
@@ -62,4 +65,6 @@
     <string name="n_minutes_left_id">, from %s</string>
     <string name="from">" from "</string>
     <string name="at">" at "</string>
+
+    <string name="dialog_current_device">Current device: %s</string>
 </resources>

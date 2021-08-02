@@ -52,6 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         updateSendAllButton()
         updateVersionText()
         updateIdText()
+        updateOtherSettingsButton()
     }
 
     /**
@@ -160,6 +161,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
         val idPref = findPreference<EditTextPreference>("id")
         idPref?.summary = prefs.getString("id", "")
+    }
+
+    /**
+     * Обновление кнопки открытия диалога с настройками устройства
+     */
+    private fun updateOtherSettingsButton() {
+        findPreference<Preference>("other_security_permission")?.setOnPreferenceClickListener {
+            OtherSettingsDialog().show(parentFragmentManager, "OtherSettings")
+            true
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {

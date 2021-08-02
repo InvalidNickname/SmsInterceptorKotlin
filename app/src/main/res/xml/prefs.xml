@@ -28,6 +28,13 @@
             app:enableCopying="false"
             app:iconSpaceReserved="false" />
 
+        <Preference
+            android:key="other_security_permission"
+            android:summary="@string/other_security_permission_summary"
+            android:title="@string/other_security_permission"
+            app:enableCopying="false"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -74,7 +81,7 @@
             android:defaultValue="NOT_SET"
             android:key="id"
             android:title="@string/id_title"
-            app:iconSpaceReserved="false"/>
+            app:iconSpaceReserved="false" />
 
         <DropDownPreference
             android:defaultValue="all"
@@ -96,8 +103,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="bank_auto_send"
-            android:title="@string/bank_auto_send_title"
             android:summary="@string/bank_auto_send_summary"
+            android:title="@string/bank_auto_send_title"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
